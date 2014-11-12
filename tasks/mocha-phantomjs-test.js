@@ -24,12 +24,21 @@ module.exports = function (grunt) {
       cwd: process.cwd()
     };
 
+    if (options.environmentScript) {
+      var environmentScript = require(options.environmentScript);
+      environmentScript.startup && environmentScript.startup();
+    }
 
     args.push('--web-security=false');
     args.push(__dirname + '/lib/phantom-script.js');
     args.push(JSON.stringify(params));
 
     var child = child_process.execFile(phantomjs.path, args, function (err) {
+
+      if (options.environmentScript) {
+        environmentScript.teardown && environmentScript.teardown();
+      }
+
       if (err) {
         grunt.log.errorlns(err.message);
         done(false);
