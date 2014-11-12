@@ -21,6 +21,12 @@ page.open = function (url, callback) {
 
 
 page.loadJquery = function (symbol, done) {
+
+  if (typeof symbol === 'function') {
+    done = symbol;
+    symbol = '$$';
+  }
+
   setTimeout(function () {
     page.includeJs('http://code.jquery.com/jquery-2.1.1.min.js', function () {
       page.evaluate(function (symbol) {
