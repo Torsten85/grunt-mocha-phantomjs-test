@@ -19,13 +19,15 @@ page.open = function (url, callback) {
   return pageOpen.call(page, url, wrappedCallback);
 };
 
-
+var jQuerySymbol = 'jQuery';
 page.loadJquery = function (symbol, done) {
 
   if (typeof symbol === 'function') {
     done = symbol;
     symbol = '$$';
   }
+
+  jQuerySymbol = symbol;
 
   setTimeout(function () {
     page.includeJs('http://code.jquery.com/jquery-2.1.1.min.js', function () {
@@ -39,7 +41,7 @@ page.loadJquery = function (symbol, done) {
 };
 
 
-page.click = function (selector) {
+page.sendMouseEvent = function (eventName, selector) {
   if (typeof selector === 'object' && selector.selector)
     selector = selector.selector;
 
@@ -50,14 +52,18 @@ page.click = function (selector) {
   } else if (typeof selector === 'number') {
     position = { left: arguments[0], top: arguments[1] || 0};
   } else {
-    position = page.evaluate(function (selector) {
-      return $$(selector).offset();
-    }, selector);
+    position = page.evaluate(function (jQuerySymbol, selector) {
+      return window[jQuerySymbol](selector).offset();
+    }, jQuerySymbol, selector);
 
     expect(position).to.have.keys(['left', 'top']);
   }
 
-  page.sendEvent('click', position.left, position.top);
+  page.sendEvent(eventName, position.left, position.top);
+};
+
+page.click = function (selector) {
+  return page.sendMouseEvent('click', selector);
 };
 
 page.key = page.event.key;
@@ -73,11 +79,16 @@ page.fill = function (selector, str, modifier) {
 page.select = function (selector) {
 
   var evaluate = function (method, value) {
-    return page.evaluate(function (selector, method, value) {
+    return page.evaluate(function (symbol, selector, method, value) {
+
+      var _$ = window[symbol];
+      var selectorMatch = selector.match(/(.*)(?:$| )iframe(?:^| )(.*)/);
+      var $target = selectorMatch === null ? _$(selector) : _$(selectorMatch[1] + ' iframe').contents().find(selectorMatch[2]);
+
       if (typeof value !== 'undefined')
-        return $$(selector)[method](value);
-      return $$(selector)[method]();
-    }, selector, method, value);
+        return $target[method](value);
+      return $target[method]();
+    }, jQuerySymbol, selector, method, value);
   };
 
   return {
@@ -111,6 +122,9 @@ page.select = function (selector) {
     },
     hasClass: function (classname) {
       return evaluate('hasClass', classname);
+    },
+    trigger: function (eventType) {
+      return evaluate('trigger', eventType);
     }
   }
 };
