@@ -7,7 +7,14 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('mochaPhantomJsTest', 'Run mocha tests in phantomJS environment', function () {
     var done = this.async();
     var options = this.options();
-    var files = this.filesSrc;
+    var files = [];
+
+    this.filesSrc.forEach(function (file) {
+      if (file !== options.environmentScript)
+        files.push(file);
+    });
+
+
 
     if (files.length === 0) {
       grunt.log.write('No files to check...');
@@ -25,7 +32,7 @@ module.exports = function (grunt) {
     };
 
     if (options.environmentScript) {
-      var environmentScript = require(options.environmentScript);
+      var environmentScript = require(process.cwd() + '/' + options.environmentScript);
       environmentScript.startup && environmentScript.startup();
     }
 
