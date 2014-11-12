@@ -20,8 +20,8 @@
       "type": "MIT"
     }
   ],
-  "devDependencies": {
+  "dependencies": {
     "phantomjs": "^1.9.12"
   },
-  "dependencies": {}
+  "devDependencies": {}
 }
