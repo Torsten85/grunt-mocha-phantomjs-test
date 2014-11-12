@@ -1,0 +1,27 @@
+{
+  "name": "grunt-mocha-phantomjs-test",
+  "version": "0.0.1",
+  "description": "A grunt task for running server side mocha tests in phantomjs environment",
+  "main": "phantom-script.js",
+  "moduleType": [
+    "globals"
+  ],
+  "authors": [
+    "Torsten Blindert"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "chai": "~1.10.0",
+    "mocha": "~2.0.1",
+    "underscore": "~1.7.0",
+    "sprintf": "~1.0.2"
+  }
+}
