@@ -7,6 +7,10 @@
     "test": "grunt",
     "ci": "grunt ci"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Torsten85/grunt-mocha-phantomjs-test.git"
+  },
   "author": {
     "name": "Torsten Blindert",
     "email": "info@by-torsten.de"
